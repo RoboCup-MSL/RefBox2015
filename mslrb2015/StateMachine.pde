@@ -1,6 +1,5 @@
 static class StateMachine
 {
-  
   private static boolean needUpdate = false; 
   private static boolean btnOn = false;
   private static ButtonsEnum btnCurrent = ButtonsEnum.BTN_ILLEGAL;
@@ -13,8 +12,7 @@ static class StateMachine
   public static ButtonsEnum setpiece_button = null;
   
   public static boolean firstKickoffCyan = true;
-
-  
+  private static boolean startedEndOfGamePenalties = false;
   
   public static void Update(ButtonsEnum click_btn, boolean on)
   {
@@ -56,10 +54,11 @@ static class StateMachine
             gsCurrent = SwitchGamePart();
             gsPrev = saveGS;
             resetStartTime(false);
+            
             if (bCommoncmds[CMDID_COMMON_HALFTIME].Label.equals("End Game"))
               send_event_v2(cCommcmds[CMDID_COMMON_ENDGAME], Commcmds[CMDID_COMMON_ENDGAME], null);
             else
-              send_event_v2(cCommcmds[CMDID_COMMON_HALFTIME], Commcmds[CMDID_COMMON_HALFTIME], null);            
+              send_event_v2(cCommcmds[CMDID_COMMON_HALFTIME], Commcmds[CMDID_COMMON_HALFTIME], null);
           }
           break;
         }
@@ -138,6 +137,7 @@ static class StateMachine
           t.newYellowCard = btnOn;
       }
       
+      /* Update game state */
       switch(gsCurrent)
       {
         // PRE-GAME and Half Times
@@ -182,14 +182,14 @@ static class StateMachine
         case GS_GAMESTOP_H4:
           if(btnCurrent.isSetPiece())
             SetSetpiece(btnCurrent.isCyan(), btnCurrent);
-          else if(btnCurrent.isStart()){
+          else if(btnCurrent.isStart())
             nextGS = SwitchRunningStopped();
-          }
           else if(btnCurrent.isStop())
             ResetSetpiece();
           else if(btnCurrent.isEndPart())
             nextGS = SwitchGamePart();
           
+
           break;
         
         case GS_GAMEON_H1:
@@ -207,6 +207,10 @@ static class StateMachine
           break;
           
         case GS_PENALTIES:
+          if(!startedEndOfGamePenalties){
+            send_to_basestation(COMM_END_OF_GAME_PENALTIES + "");
+            startedEndOfGamePenalties = true;
+          }
           if(btnCurrent.isSetPiece())                        // Kick Off either, Penalty either, DropBall
             SetSetpiece(btnCurrent.isCyan(), btnCurrent);
           else if(btnCurrent.isStop())
@@ -215,7 +219,6 @@ static class StateMachine
             nextGS = SwitchGamePart();
           else if(btnCurrent.isStart())
             nextGS = SwitchRunningStopped();
-            
           break;
         
         case GS_PENALTIES_ON:
@@ -335,6 +338,7 @@ static class StateMachine
       send_to_basestation("" + COMM_RESET);
       
       needUpdate = false; 
+      startedEndOfGamePenalties = false;
       btnCurrent = ButtonsEnum.BTN_ILLEGAL;
       btnPrev = ButtonsEnum.BTN_ILLEGAL;
       gsCurrent = GameStateEnum.GS_PREGAME;

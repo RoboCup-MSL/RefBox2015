@@ -342,6 +342,7 @@ public static final char COMM_FIRST_HALF = '1';
 public static final char COMM_SECOND_HALF = '2';
 public static final char COMM_FIRST_HALF_OVERTIME = '3';  //NEW 2015CAMBADA: 
 public static final char COMM_SECOND_HALF_OVERTIME = '4';  //NEW 2015CAMBADA: 
+public static final char COMM_END_OF_GAME_PENALTIES = '5';
 public static final char COMM_HALF_TIME = 'h';
 public static final char COMM_END_GAME = 'e';    //ends 2nd part, may go into overtime
 public static final char COMM_GAMEOVER = 'z';  //NEW 2015CAMBADA: Game Over
@@ -392,6 +393,7 @@ void comms_initDescriptionDictionary() {
   Description.set("2", "2nd half");
   Description.set("3", "Overtime 1st half");
   Description.set("4", "Overtime 2nd half");
+  Description.set("5", "End of Game Penalties");
   Description.set("L", "Park");
   
   Description.set("K", "CYAN Kickoff");

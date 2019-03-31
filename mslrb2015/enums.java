@@ -200,4 +200,3 @@ enum PopupTypeEnum
       return value;
   }
 };
-
